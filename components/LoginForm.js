@@ -1,33 +1,45 @@
 // components/LoginForm.js
 
 import React, { useEffect, useState } from 'react';
-import styles from '../styles/Home.module.css';
+import styles from '../styles/Login.module.css';
 import { useRouter } from 'next/router';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordValid , setPasswordValid] = useState(false)
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (username === 'Prasanna' && password === 'Prasanna') {
-      console.log('Login');
-      setPasswordValid(true)
-      router.push('/dashboard'); 
-    } else {
+    const response = await fetch('http://localhost:5000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    });
+    
+    const data = await response.json();
+    console.log("response" , data)
+    if(data['Login'] === "True"){
+      console.log('Login Successful');
+      localStorage.setItem('userLoggedIn' , true)
+      router.push('/hammer');
+    }else{
       console.log('Invalid credentials');
-      setPasswordValid(false)
+      localStorage.setItem('userLoggedIn' , false)
       setErrorMessage('Invalid username or password. Please try again.');
     }
   };
 
   return (
     <div className={styles.loginForm}>
-     
+
 
       <form onSubmit={handleLogin}>
         <input
@@ -42,10 +54,10 @@ const LoginForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-      <button
+        <button
           type="submit"
-        >Login</button> 
-          {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+        >Login</button>
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
       </form>
     </div>
   );

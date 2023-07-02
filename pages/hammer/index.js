@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Dashboard from '@/components/Dashboard';
+import AuthRoute from '@/components/AuthRoute';
 
 const DashboardPage = () => {
   const [tradeData, setTradeData] = useState({})
@@ -20,9 +21,9 @@ const DashboardPage = () => {
   }, []);
 
   return (
-  <>
+  <AuthRoute>
   <Dashboard data={tradeData}></Dashboard>
-  </>
+  </AuthRoute>
   );
 };
 

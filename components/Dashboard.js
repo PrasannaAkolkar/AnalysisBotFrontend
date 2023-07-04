@@ -87,7 +87,12 @@ const Dashboard = ({ data }) => {
 
   return (
     <>
-      <h1 style={{ textAlign: 'center' }}>Hammer Dashboard</h1>
+   
+    <div style={{display:"flex" , textAlign:"center", justifyContent:"center"}}>
+    <h1 style={{ textAlign: 'center' }}>Hammer Strategy</h1>
+    <img src='hammer.svg' style={{width:"100px"}}></img>
+    </div>
+     
       <div className={styles.containerbutton}>
         <div className={styles.snapshot}>
           <button className={styles.downloadButton} onClick={handleDownloadTradeClick}>

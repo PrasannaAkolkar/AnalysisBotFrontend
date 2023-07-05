@@ -3,6 +3,7 @@ import Image from 'next/image';
 import styles from '../../styles/TradingStrategiesPage.module.css';
 import { useRouter } from 'next/router';
 import { strategies } from '@/utils/strategy';
+import Logo from '@/components/Logo';
 
 const TradingStrategiesPage = () => {
   const [activePage, setActivePage] = useState(1);
@@ -24,6 +25,7 @@ const TradingStrategiesPage = () => {
 
   return (
     <div className={styles.container}>
+      {/* <Logo /> */}
       <h1 className={styles.title}>Trading Strategies</h1>
       <div className={styles.strategyList}>
         {displayedStrategies.map((strategy, index) => (

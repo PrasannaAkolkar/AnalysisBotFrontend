@@ -75,6 +75,56 @@ export const strategies = [
     accuracy: '80%',
     imageUrl: '/M_W_Pattern.png',
     redirectionLink: '/hammer',
+  },
+  {
+    name: '0.5 Setup',
+    description: 'The 0.5 setup is a highly profitable strategy that enables traders to capitalize on small price movements with minimal risk. It is versatile and effective in various market conditions.',
+    rules: [
+      'Switch to a 15-minute timeframe and identify the closest swing high and swing low, which are key turning points in price',
+      'Utilize the Fibonacci tool to locate the 0.5 line, a specific level indicating a potential retracement or continuation',
+      'Determine the potential price range by repeatedly using the tool to measure how much an index or stock can move in one continuous stretch (e.g., Nifty moves around 60-70 points, Bank Nifty moves around 150 points) and take note of this value',
+      'Add the recorded value to the swing high, marking it as a resistance level. Repeat this process to keep up with the market`s progress',
+      'Similarly, subtract the recorded value from the swing low, marking it as a support level. Continue this process to stay aligned with the market',
+      'Whenever the market reaches the 0.5 support or resistance level, consider taking a bearish or bullish trade, respectively',
+      'Preferably use a 1-minute timeframe for trade execution',
+      'The primary advantage of this setup is the potential for capturing a substantial target with a minimal stop loss',
+      'This setup may result in frequent stop losses, but the large target outweighs the impact',
+      'Cease trading for the day if the target is achieved at least once',
+      'Risk Reward ratio is approximately 6:1',
+      'To manage risk, consider moving the stoploss to the starting position once 30-40 points (nifty) are captured',
+      'Use it for Nifty before trying it on stocks'
+      
+    ],
+    target: '0.5 level in the direction of the trade',
+    stopLoss: '7-10 points (nifty) or after the candle body forms above/below the 0.5 line',
+    accuracy: '80%',
+    imageUrl: '/point5_setup.png',
+    redirectionLink: '/hammer',
+  },
+  {
+    name: '0.7 Setup',
+    description: 'The 0.7 setup is employed to monitor market direction and capture significant price movements. It is specifically utilized during V-shaped market recoveries, aiming to capitalize on substantial moves following the recovery phase',
+    rules: [
+      'Switch to a 5-minute timeframe and identify a V shape on the spot chart',
+      'There can be 2 types of V: Normal V and Inverted V. Both have exactly opposite rules',
+      'Once a V is spotted, make sure the recovery move is a one-way continous move and must not have a fight between bulls and bears',
+      'In case of Normal V, place the fibonacci tool on the top of the V and drag it till the swing low. Mark the 0.7 line. Overalap the 0.5 line over the 0.7 line and mark target at the end of the tool.',
+      'Now place the tool on the swing low and drag till swing high and mark the 0.5 line',
+      'Scenario 1: Market reaches the 0.7 level and takes a retracement to the 0.5 level. Take an entry in this case near the 0.5 level',
+      'Scenario 2: Market reaches and breaches the 0.7 level. It gives a fake breakout and comes back to the 0.5 level. Take an entry near the 0.5 level',
+      'Scenario 3: Market breaches 0.7 level and also breaches the top of the V. Take an entry on retesting.',
+      'Fake Breakout: Candle forms its body above and below the pivot line',
+      'Real Breakout: Candle forms its body after the pivot line (even though wick might be intersecting it',
+      'Risk Reward ratio is approximately 6:1',
+      'To manage risk, consider moving the stoploss to the starting position once 30-40 points (nifty) are captured',
+      'Use it for Nifty before trying it on stocks'
+      
+    ],
+    target: 'As specified in the rules or 60 points minimum',
+    stopLoss: '7-10 points (nifty) or after the candle body forms above/below the 0.5 line or pivot line',
+    accuracy: '80%',
+    imageUrl: '/point7_setup.png',
+    redirectionLink: '/hammer',
   }
   // Add more strategies here
 ];

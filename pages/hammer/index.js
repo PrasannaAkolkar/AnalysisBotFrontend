@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Dashboard from '@/components/Dashboard';
 import AuthRoute from '@/components/AuthRoute';
+import { GET_STOCK_DETAILS_HAMMER_API } from '@/utils/apiLinks';
 
 const DashboardPage = () => {
   const [tradeData, setTradeData] = useState({})
@@ -8,7 +9,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/getdetails');
+        const response = await fetch(GET_STOCK_DETAILS_HAMMER_API);
         const data = await response.json();
         setTradeData(data)
         console.log("data is" , data)

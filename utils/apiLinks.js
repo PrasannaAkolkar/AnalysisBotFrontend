@@ -4,4 +4,5 @@ export const DOWNLOAD_BACKTEST_HAMMER_CSV_API = `${BASE_URL}/downloadBacktestHam
 export const GET_STOCK_DETAILS_HAMMER_API = `${BASE_URL}/getdetails`;
 export const BACKTEST_ALL_STOCKS_API = `${BASE_URL}/testall`;
 export const LOGIN_API = `${BASE_URL}/login`;
-
+export const GET_QUOTE_API = `${BASE_URL}/get-quote`
+export const GET_OPTION_CHAIN = `${BASE_URL}/option-chain`

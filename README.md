@@ -1,38 +1,48 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Trade Bot Frontend with Next.js
+
+<!-- ![Project Logo](/path/to/logo.png) -->
+
+This project is a Next.js-based frontend application for a trade bot designed to automate trading in the Indian stock market using the ICICI Breeze API. It offers several key features to enhance your trading experience.
+
+## Features
+
+- **Trade Bot**: The application integrates with the ICICI Breeze API to enable automated trading in the Indian stock market. The bot facilitates trade execution based on predefined strategies.
+
+- **Backtesting**: The built-in bot supports backtesting functionality specifically for the "Hammer strategy." You can analyze historical data and evaluate the strategy's performance.
+
+- **Report Generation**: The bot generates comprehensive reports for the backtested data. These reports can be downloaded, allowing for in-depth analysis and assessment of the strategy's effectiveness.
+
+- **Learning Page**: The project includes a dedicated learning page that offers a collection of various strategies for trading in the stock market. Explore different techniques and gain insights into successful trading approaches.
+
+## Upcoming Features
+
+- **Order Placement**: The upcoming release will include the ability to place orders directly from the website. You can conveniently execute trades without leaving the application.
+
+- **Watchlists**: Create personalized watchlists to track specific stocks or market segments. Stay updated on price movements and make informed trading decisions.
+
+- **Advanced Analysis Reports**: Enhance your trading strategies with advanced analysis reports. Gain deeper insights into market trends, patterns, and indicators to improve your trading performance.
+
+## Technologies Used
+
+- Next.js
+- ICICI Breeze API
+- HTML
+- CSS
+- JavaScript
 
 ## Getting Started
 
-First, run the development server:
+To get started with the Trade Bot frontend, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+1. Clone the repository: `git clone https://github.com/PrasannaAkolkar/AnalysisBotFrontend.git`
+2. Install dependencies: `npm i`
+3. Launch the application: `npm run dev`
+4. Access the application locally: `http://localhost:3000`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+Contributions are welcome! If you have any ideas, suggestions, or improvements, please open an issue or submit a pull request.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Contact
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+For any inquiries or questions, please reach out to project maintainer Prasanna Akolkar

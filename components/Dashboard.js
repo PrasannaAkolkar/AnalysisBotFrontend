@@ -3,6 +3,7 @@ import styles from '../styles/Dashboard.module.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/router';
+import { SNAPSHOT_API, DOWNLOAD_BACKTEST_HAMMER_CSV_API, GET_STOCK_DETAILS_HAMMER_API, BACKTEST_ALL_STOCKS_API } from '@/utils/apiLinks';
 
 const Dashboard = ({ data }) => {
   const router = useRouter();
@@ -29,7 +30,7 @@ const Dashboard = ({ data }) => {
   };
 
   const handleDownloadTradeClick = async () => {
-    const response = await fetch('http://localhost:5000/snapshot', {
+    const response = await fetch(SNAPSHOT_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ const Dashboard = ({ data }) => {
   };
 
   const handleDownload = async () => {
-    await fetch('http://localhost:5000/downloadBacktestHammerCsv') // Replace with your API endpoint
+    await fetch(DOWNLOAD_BACKTEST_HAMMER_CSV_API)
       .then((response) => response.blob())
       .then((blob) => {
         const url = URL.createObjectURL(blob);
@@ -62,7 +63,7 @@ const Dashboard = ({ data }) => {
 
   const handleShowTradeClick = async () => {
     try {
-      const response = await fetch('http://localhost:5000/getdetails');
+      const response = await fetch(GET_STOCK_DETAILS_HAMMER_API);
       data = await response.json();
       console.log('final data is', data);
       setShowDataButton(true);
@@ -73,7 +74,7 @@ const Dashboard = ({ data }) => {
   };
 
   const testHammerStrategy = async () => {
-    const response = await fetch('http://localhost:5000/testall', {
+    const response = await fetch(BACKTEST_ALL_STOCKS_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,12 +88,12 @@ const Dashboard = ({ data }) => {
 
   return (
     <>
-   
-    <div style={{display:"flex" , textAlign:"center", justifyContent:"center"}}>
-    <h1 style={{ textAlign: 'center' }}>Hammer Strategy</h1>
-    <img src='hammer.svg' style={{width:"100px"}}></img>
-    </div>
-     
+
+      <div style={{ display: "flex", textAlign: "center", justifyContent: "center" }}>
+        <h1 style={{ textAlign: 'center' }}>Hammer Strategy</h1>
+        <img src='hammer.svg' style={{ width: "100px" }}></img>
+      </div>
+
       <div className={styles.containerbutton}>
         <div className={styles.snapshot}>
           <button className={styles.downloadButton} onClick={handleDownloadTradeClick}>

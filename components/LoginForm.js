@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/Login.module.css';
 import { useRouter } from 'next/router';
+import { LOGIN_API } from '@/utils/apiLinks';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -13,7 +14,7 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:5000/login', {
+    const response = await fetch(LOGIN_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

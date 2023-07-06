@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import styles from '../../styles/PlaceOrderPage.module.css';
 import OptionChain from '@/components/OptionChain';
 import { GET_OPTION_CHAIN, GET_QUOTE_API } from '@/utils/apiLinks';
+// import { convertToKeyValue } from '@/utils/stock_names';
+import { stocks_names_breeze } from '@/utils/stock_names';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import OrderPopUp from '@/components/OrderPopUp';
 
-const stocks = ['TATASTEEL', 'RELIANCE', 'INFY', 'HDFCBANK', 'ICICIBANK', 'HINDUNILVR', 'TCS', 'WIPRO', 'AXISBANK', 'SBI'];
+const stock_names = (Object.values(stocks_names_breeze[0]))
+const stocks = stock_names
 
 const PlaceOrderPage = () => {
   const [selectedStock, setSelectedStock] = useState('');
@@ -13,6 +19,11 @@ const PlaceOrderPage = () => {
   const [optionChainLoaded, setOptionChainLoaded] = useState(false);
   const [callOptionArray, setCallOptionArray] = useState([]);
   const [putOptionArray, setPutOptionArray] = useState([]);
+  const [selectedDateExpiry, setSelectedDateExpiry] = useState(null);
+
+  function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
 
   const handleStockSelection = (stock) => {
     setSelectedStock(stock);
@@ -52,10 +63,36 @@ const PlaceOrderPage = () => {
     console.log('Fetching active positions...');
   };
 
+  const handleDateChangeFrom = (date) => {
+    setSelectedDateExpiry(date);
+  };
+
+  const filterDatePicker = (date) => {
+    const selectedDay = date.getDay();
+    return selectedDay === 4 && date >= new Date();
+  };
+
   const handleLoadOptionChain = async () => {
+    // const keyValuePairs = convertToKeyValue();
+    console.log("key value pairs", stocks_names_breeze);
+    console.log("key from value", getKeyByValue(stocks_names_breeze[0], selectedStock))
     try {
-      const response = await fetch(GET_OPTION_CHAIN);
+      const response = await fetch(GET_OPTION_CHAIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+          expiry: selectedDateExpiry
+        }),
+      });
       const data = await response.json();
+      if (data[0]?.Error) {
+        console.log("error", data[0]?.Error)
+        alert(data[0]?.Error);
+      }
+      console.log("data is", data)
       const callPayload = data[0]?.Success || [];
       const putPayload = data[1]?.Success || [];
       const filteredCallPayload = callPayload.filter((callOption) => {
@@ -79,6 +116,8 @@ const PlaceOrderPage = () => {
       setPutOptionArray(filteredPutPayload);
       console.log(filteredPutPayload[0])
       setOptionChainLoaded(true);
+
+
     } catch (error) {
       console.error('Error loading option chain:', error);
     }
@@ -86,7 +125,23 @@ const PlaceOrderPage = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Place Order</h1>
+      
+      <OrderPopUp
+        stockName="AAPL"
+        lastTradedPrice="150.50"
+        lastTradedDate="2023-07-06"
+        high="155.20"
+        low="148.80"
+        open="151.00"
+        prevClose="148.90"
+        productType="Equity"
+        totalTradedQuantity="100000"
+      />
+      <div style={{ display: "flex" }}>
+        <img src="place_order.jpg" style={{ width: "250px", "height": "150px", display: "flex", margin: "auto", marginBottom: "2%" }} ></img>
+      </div>
+
+      <h1 className={styles.title}>Lets Trade!</h1>
       <div style={{ display: 'flex' }}>
         <div className={styles.leftSection} >
           <div className={styles.inputGroup}>
@@ -94,31 +149,39 @@ const PlaceOrderPage = () => {
               Stock / Index:
             </label>
             <div className={styles.autocomplete}>
-              <input
-                type="text"
-                id="stock"
-                className={styles.input}
-                placeholder="Search for a stock..."
-                value={selectedStock}
-                onChange={(e) => {
-                  setSelectedStock(e.target.value);
-                  setShowAutocomplete(true);
-                }}
-              />
-              {showAutocomplete && (
-                <ul className={styles.autocompleteList}>
-                  {stocks
-                    .filter((stock) => stock.toUpperCase().includes(selectedStock.toUpperCase()))
-                    .map((stock) => (
-                      <li key={stock} onClick={() => handleStockSelection(stock)}>
-                        {stock}</li>
-                    ))}
-                </ul>
-              )}
-            </div>
+  <input
+    type="text"
+    id="stock"
+    className={styles.input}
+    placeholder="Search for a stock..."
+    value={selectedStock}
+    onChange={(e) => {
+      setSelectedStock(e.target.value);
+      setShowAutocomplete(true);
+    }}
+  />
+  {showAutocomplete && (
+    <ul className={styles.autocompleteList}>
+      {stocks
+        .filter((stock) =>
+          stock.toLowerCase().startsWith(selectedStock.toLowerCase())
+        )
+        .filter((stock, index, self) =>
+          self.findIndex((s) => s.toLowerCase() === stock.toLowerCase()) === index
+        )
+        .slice(0, 5)
+        .map((stock) => (
+          <li key={stock} onClick={() => handleStockSelection(stock)}>
+            {stock}
+          </li>
+        ))}
+    </ul>
+  )}
+</div>
+
           </div>
           <div className={styles.inputGroup}>
-            <label htmlFor="instrument" className={styles.label}>
+            {/* <label htmlFor="instrument" className={styles.label}>
               Instrument:
             </label>
             <select
@@ -131,7 +194,19 @@ const PlaceOrderPage = () => {
               <option value="options">Options</option>
               <option value="futures">Futures</option>
               <option value="stocks">Stocks</option>
-            </select>
+            </select> */}
+          </div>
+          <div className={styles.autocomplete}>
+            <label htmlFor="instrument" className={styles.label}>
+              Expiry (Only for Options):
+            </label>
+            <DatePicker
+              selected={selectedDateExpiry}
+              onChange={handleDateChangeFrom}
+              dateFormat="yyyy-MM-dd"
+              // className={styles.datePicker}
+              filterDate={filterDatePicker}
+            />
           </div>
           <div className={styles.buttonGroup}>
             <button className={styles.placeOrderButton} onClick={handleConfirmation}>
@@ -152,9 +227,6 @@ const PlaceOrderPage = () => {
 
           </div>
         </div>
-        {/* <div>
-        <OptionChain callPayload={callOptionArray} putPayload={putOptionArray} />
-        </div> */}
         
       </div>
 

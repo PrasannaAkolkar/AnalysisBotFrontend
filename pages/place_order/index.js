@@ -94,8 +94,18 @@ const PlaceOrderPage = () => {
       }),
     });
     const data = await response.json();
-    console.log("x data is", data?.Success)
-    setHistoricalData(data?.Success)
+    // console.log("x data is", data?.Success)
+    let priceDate = []
+    const historicalDataList = data?.Success
+    for(let i=0;i<historicalDataList.length;i++){
+      let payload = {
+        "price": historicalDataList[i].close,
+        "date": historicalDataList[i].datetime
+      }
+      priceDate.push(payload)
+    }
+    
+    setHistoricalData(priceDate)
 
   }
 
@@ -178,18 +188,18 @@ const PlaceOrderPage = () => {
     }
   };
 
-  const stockData = [
-    { date: '2022-01-01', price: 50 },
-    { date: '2022-01-02', price: 55 },
-    { date: '2022-01-03', price: 34 },
-    { date: '2022-01-04', price: 21},
-    { date: '2022-01-05', price: 100 },
-    { date: '2022-01-06', price: 50 },
-    { date: '2022-01-07', price: 55 },
-    { date: '2022-01-08', price: 34 },
-    { date: '2022-01-09', price: 21},
-    { date: '2022-01-10', price: 100 },
-  ];
+  // const stockData = [
+  //   { date: '2022-01-01', price: 50 },
+  //   { date: '2022-01-02', price: 55 },
+  //   { date: '2022-01-03', price: 34 },
+  //   { date: '2022-01-04', price: 21 },
+  //   { date: '2022-01-05', price: 100 },
+  //   { date: '2022-01-06', price: 50 },
+  //   { date: '2022-01-07', price: 55 },
+  //   { date: '2022-01-08', price: 34 },
+  //   { date: '2022-01-09', price: 21 },
+  //   { date: '2022-01-10', price: 100 },
+  // ];
 
   return (
     <div className={styles.container}>
@@ -275,8 +285,8 @@ const PlaceOrderPage = () => {
             </button>
           </div>
           <div>
-            <h1>Stock Chart</h1>
-            <LineChart data={stockData} width={400} height={200} />
+            <u><h2 style={{marginTop:"5%"}}>{selectedStock}</h2></u>
+            <LineChart data={historicalData} width={600} height={200}/>
           </div>
         </div>
         <div style={{ marginLeft: "15%", display: "flex" }}>

@@ -1,0 +1,89 @@
+.dialogContainer {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  
+  .dialogTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    color: #fff;
+    padding: 16px;
+  }
+  
+  .closeButton {
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.6rem;
+  }
+  
+  .dialogContent {
+    padding: 16px;
+  }
+  
+  .infoRow {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .infoIcon {
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .infoItem {
+    display: flex;
+    flex-direction: column;
+    margin-right: 32px;
+  }
+  
+  .infoLabel {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .infoValue {
+    font-size: 1.4rem;
+    color: #007bff;
+  }
+  
+  .dialogActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  
+  .buyButton,
+  .sellButton {
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .buyButton {
+    background-color: #28a745;
+    color: #fff;
+  }
+  
+  .sellButton {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .buyButton:hover,
+  .sellButton:hover {
+    background-color: #218838;
+  }
+  
+  .sellButton:hover {
+    background-color: #c82333;
+  }
+  

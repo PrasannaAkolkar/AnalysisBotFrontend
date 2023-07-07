@@ -1,17 +1,37 @@
-
-
 .container {
   width: 100%;
-  /* max-width: 800px; */
+  /* max-width: 1300px; */
   margin: 0 auto;
   padding: 20px;
+  /* background-color: #857b7b; */
 }
 
+
 .title {
-  font-size: 24px;
+
+  font-size: 36px;
   font-weight: bold;
-  margin-bottom: 20px;
+  text-align: center;
+  color: #22203d;
+  animation: neonGlow 1.5s ease-in-out infinite alternate;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00ff48, 0 0 40px #00ff48, 0 0 50px #00ff48, 0 0 60px #00ff48;
 }
+
+@keyframes neonGlow {
+  0% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00ff48, 0 0 40px #00ff48, 0 0 50px #00ff48, 0 0 60px #00ff48;
+  }
+  50% {
+    text-shadow: none;
+  }
+  100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00ff48, 0 0 40px #00ff48, 0 0 50px #00ff48, 0 0 60px #00ff48;
+  }
+}
+
+
+
+
 
 .splitView {
   display: grid;

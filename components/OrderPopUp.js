@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
+
 
 const useStyles = makeStyles((theme) => ({
   dialogTitle: {
@@ -59,17 +60,21 @@ const OrderPopUp = ({
   high,
   low,
   open,
-  prevClose,
+  bestBidPrice,
   exchange_code,
   totalTradedQuantity,
   openPop,
   handleClose,
+  handleRefreshData
 }) => {
   const classes = useStyles();
 
   const handlePopUpClose = () => {
     handleClose();
   };
+  useEffect(() => {
+    handleRefreshData(); // Refresh data when the component mounts or openPop changes
+  }, []);
 
   return (
     <Dialog open={openPop} onClose={handlePopUpClose} maxWidth="sm" fullWidth>
@@ -125,8 +130,8 @@ const OrderPopUp = ({
             <img src="high-priority.svg" alt="Last Traded Price" style={{width:"20px","height":"20px"}}/>
             </div>
             <div className={classes.infoText}>
-              <p className="info-label">Prev Close: </p>
-              <p className="info-value">{prevClose}</p>
+              <p className="info-label">Best Bid Price: </p>
+              <p className="info-value">{bestBidPrice}</p>
             </div>
           </div>
           
@@ -155,6 +160,9 @@ const OrderPopUp = ({
         </Button>
         <Button className={classes.sellButton} onClick={handlePopUpClose}>
           Sell
+        </Button>
+        <Button className={classes.refreshButton} onClick={handleRefreshData}>
+          Refresh Data
         </Button>
       </DialogActions>
     </Dialog>

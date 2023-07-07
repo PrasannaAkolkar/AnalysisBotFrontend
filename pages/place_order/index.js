@@ -25,13 +25,31 @@ const PlaceOrderPage = () => {
   function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
   }
+  const handleRefreshData = async () => {
+    try {
+      const response = await fetch(GET_QUOTE_API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+        }),
+      });
+      const data = await response.json();
+
+      setStockPriceObj(data);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    }
+  };
 
   const handleStockSelection = (stock) => {
     setSelectedStock(stock);
-    setShowAutocomplete(false); // Close the autocomplete
+    setShowAutocomplete(false);
   };
   async function fetchData() {
-    // You can await here
+
     const response = await fetch(GET_QUOTE_API, {
       method: 'POST',
       headers: {
@@ -50,52 +68,14 @@ const PlaceOrderPage = () => {
     fetchData();
   }, []);
 
-  const fetchStockPrice = async (selectedStock) => {
-
-
-
-    try {
-      // const response = await fetch(GET_QUOTE_API);
-      const response = await fetch(GET_QUOTE_API, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-        }),
-      });
-      const data = await response.json();
-      console.log("inside data", data)
-      // setStockPriceObj(data.Success[0])
-      // setTest(data.Success[0])
-      // console.log("inside set", data.Success[0])
-      // console.log("price is" , stockPriceObj.Success[0])
-      // const price = data.Success[0]?.ltp || 0;
-      return data
-
-      // setSelectedStockPrice(price);
-    } catch (error) {
-      console.error('Error fetching stock price:', error);
-    }
-  };
-
   const handleOpenPopUp = async () => {
     console.log("inside popup")
-    // fetchStockPrice(selectedStock)
-      fetchData();
+    fetchData();
     console.log("here")
     setOpenPopUp(true);
   };
   const handleClosePopUp = () => {
     setOpenPopUp(false);
-  };
-  const handlePlaceOrder = () => {
-    console.log('Order placed!');
-  };
-
-  const handleConfirmation = () => {
-
   };
 
   const handleGetActivePositions = () => {
@@ -154,8 +134,6 @@ const PlaceOrderPage = () => {
       setCallOptionArray(filteredCallPayload);
       setPutOptionArray(filteredPutPayload);
       console.log(filteredPutPayload[0])
-      // setOptionChainLoaded(true);
-
 
     } catch (error) {
       console.error('Error loading option chain:', error);
@@ -173,9 +151,10 @@ const PlaceOrderPage = () => {
         high={stockPriceObj?.Success?.[0]?.high || ""}
         low={stockPriceObj?.Success?.[0]?.low || ""}
         open={stockPriceObj?.Success?.[0]?.open || ""}
-        prevClose={stockPriceObj?.Success?.[0]?.previous_close || ""}
+        bestBidPrice={stockPriceObj?.Success?.[0]?.best_bid_price || ""}
         exchange_code={stockPriceObj?.Success?.[0]?.exchange_code || ""}
         totalTradedQuantity={stockPriceObj?.Success?.[0]?.total_quantity_traded || ""}
+        handleRefreshData={handleRefreshData}
       />}
       <div style={{ display: "flex" }}>
         <img src="place_order.jpg" style={{ width: "250px", "height": "150px", display: "flex", margin: "auto", marginBottom: "2%" }} ></img>

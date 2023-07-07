@@ -7,9 +7,10 @@ import { stocks_names_breeze } from '@/utils/stock_names';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import OrderPopUp from '@/components/OrderPopUp';
-
+import PortfolioTable from '@/components/Holdings';
 const stock_names = (Object.values(stocks_names_breeze[0]))
 const stocks = stock_names
+import LineChart from '@/components/LineStickChart';
 
 const PlaceOrderPage = () => {
   const [openPopUp, setOpenPopUp] = useState(false);
@@ -20,7 +21,19 @@ const PlaceOrderPage = () => {
   const [putOptionArray, setPutOptionArray] = useState([]);
   const [selectedDateExpiry, setSelectedDateExpiry] = useState(null);
   const [stockPriceObj, setStockPriceObj] = useState(null)
-  let [test, setTest] = useState({})
+  let [portfolioPositions, setPortfolioPositions] = useState(null)
+  const [historicalData, setHistoricalData] = useState([
+    { date: '2022-01-01', price: 50 },
+    { date: '2022-01-02', price: 55 },
+    { date: '2022-01-03', price: 34 },
+    { date: '2022-01-04', price: 21 },
+    { date: '2022-01-05', price: 100 },
+    { date: '2022-01-06', price: 50 },
+    { date: '2022-01-07', price: 55 },
+    { date: '2022-01-08', price: 34 },
+    { date: '2022-01-09', price: 21 },
+    { date: '2022-01-10', price: 100 },
+  ])
 
   function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
@@ -48,6 +61,12 @@ const PlaceOrderPage = () => {
     setSelectedStock(stock);
     setShowAutocomplete(false);
   };
+
+  async function fetchPositions() {
+    const response = await fetch('http://localhost:5000/portfolio-positions')
+    const data = await response.json();
+    setPortfolioPositions(data?.Success)
+  }
   async function fetchData() {
 
     const response = await fetch(GET_QUOTE_API, {
@@ -60,13 +79,32 @@ const PlaceOrderPage = () => {
       }),
     });
     const data = await response.json();
-
     setStockPriceObj(data)
-    console.log("x", stockPriceObj)
   }
+
+  async function fetchHistoricalData() {
+
+    const response = await fetch("http://localhost:5000/historical-data", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+      }),
+    });
+    const data = await response.json();
+    console.log("x data is", data?.Success)
+    setHistoricalData(data?.Success)
+
+  }
+
   useEffect(() => {
     fetchData();
-  }, []);
+    fetchPositions()
+    fetchHistoricalData()
+
+  }, [selectedStock]);
 
   const handleOpenPopUp = async () => {
     console.log("inside popup")
@@ -140,6 +178,19 @@ const PlaceOrderPage = () => {
     }
   };
 
+  const stockData = [
+    { date: '2022-01-01', price: 50 },
+    { date: '2022-01-02', price: 55 },
+    { date: '2022-01-03', price: 34 },
+    { date: '2022-01-04', price: 21},
+    { date: '2022-01-05', price: 100 },
+    { date: '2022-01-06', price: 50 },
+    { date: '2022-01-07', price: 55 },
+    { date: '2022-01-08', price: 34 },
+    { date: '2022-01-09', price: 21},
+    { date: '2022-01-10', price: 100 },
+  ];
+
   return (
     <div className={styles.container}>
 
@@ -161,7 +212,7 @@ const PlaceOrderPage = () => {
       </div>
 
       <h1 className={styles.title}>Lets Trade!</h1>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', marginTop: "5%" }}>
         <div className={styles.leftSection} >
           <div className={styles.inputGroup}>
             <label htmlFor="stock" className={styles.label}>
@@ -223,17 +274,21 @@ const PlaceOrderPage = () => {
               Load Option Chain
             </button>
           </div>
+          <div>
+            <h1>Stock Chart</h1>
+            <LineChart data={stockData} width={400} height={200} />
+          </div>
         </div>
-        <div className={styles.rightSection}>
+        <div style={{ marginLeft: "15%", display: "flex" }}>
+
+          <PortfolioTable portfolioPositions={portfolioPositions}></PortfolioTable>
           <div className={styles.optionChainContainer}>
-
             <OptionChain callPayload={callOptionArray} putPayload={putOptionArray} />
-
           </div>
         </div>
 
-      </div>
 
+      </div>
 
     </div>
   );

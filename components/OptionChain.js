@@ -44,7 +44,7 @@ const OptionChain = ({ callPayload, putPayload }) => {
   return (
     <div
       className={`${styles.optionChainContainer} ${isCollapsed ? styles.collapsed : ''}`}
-      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+      style={{ transform: `translate(${position.x}px, ${position.y}px)`, marginTop:"8%" }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

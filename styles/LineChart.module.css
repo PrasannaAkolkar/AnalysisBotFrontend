@@ -1,0 +1,28 @@
+.chart {
+  border: 1px solid #ccc;
+}
+
+.line {
+  stroke: #007bff;
+}
+
+.point {
+  fill: #007bff;
+}
+.chartContainer {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.tooltipText {
+  display: inline-block;
+  margin-top: 2px;
+}

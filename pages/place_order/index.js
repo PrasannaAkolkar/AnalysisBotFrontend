@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../styles/PlaceOrderPage.module.css';
 import OptionChain from '@/components/OptionChain';
 import { GET_OPTION_CHAIN, GET_QUOTE_API } from '@/utils/apiLinks';
@@ -12,14 +12,15 @@ const stock_names = (Object.values(stocks_names_breeze[0]))
 const stocks = stock_names
 
 const PlaceOrderPage = () => {
+  const [openPopUp, setOpenPopUp] = useState(false);
   const [selectedStock, setSelectedStock] = useState('');
   const [selectedStockPrice, setSelectedStockPrice] = useState(0);
-  const [selectedInstrument, setSelectedInstrument] = useState('');
   const [showAutocomplete, setShowAutocomplete] = useState(false);
-  const [optionChainLoaded, setOptionChainLoaded] = useState(false);
   const [callOptionArray, setCallOptionArray] = useState([]);
   const [putOptionArray, setPutOptionArray] = useState([]);
   const [selectedDateExpiry, setSelectedDateExpiry] = useState(null);
+  const [stockPriceObj, setStockPriceObj] = useState(null)
+  let [test, setTest] = useState({})
 
   function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
@@ -29,34 +30,72 @@ const PlaceOrderPage = () => {
     setSelectedStock(stock);
     setShowAutocomplete(false); // Close the autocomplete
   };
+  async function fetchData() {
+    // You can await here
+    const response = await fetch(GET_QUOTE_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+      }),
+    });
+    const data = await response.json();
 
-  const fetchStockPrice = async (stock) => {
+    setStockPriceObj(data)
+    console.log("x", stockPriceObj)
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchStockPrice = async (selectedStock) => {
+
+
+
     try {
-      const response = await fetch(GET_QUOTE_API);
+      // const response = await fetch(GET_QUOTE_API);
+      const response = await fetch(GET_QUOTE_API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+        }),
+      });
       const data = await response.json();
-      const price = data.Success[0]?.ltp || 0;
-      setSelectedStockPrice(price);
+      console.log("inside data", data)
+      // setStockPriceObj(data.Success[0])
+      // setTest(data.Success[0])
+      // console.log("inside set", data.Success[0])
+      // console.log("price is" , stockPriceObj.Success[0])
+      // const price = data.Success[0]?.ltp || 0;
+      return data
+
+      // setSelectedStockPrice(price);
     } catch (error) {
       console.error('Error fetching stock price:', error);
     }
   };
 
-  const handleInstrumentSelection = (instrument) => {
-    setSelectedInstrument(instrument);
+  const handleOpenPopUp = async () => {
+    console.log("inside popup")
+    // fetchStockPrice(selectedStock)
+      fetchData();
+    console.log("here")
+    setOpenPopUp(true);
   };
-
+  const handleClosePopUp = () => {
+    setOpenPopUp(false);
+  };
   const handlePlaceOrder = () => {
     console.log('Order placed!');
   };
 
   const handleConfirmation = () => {
-    if (selectedStock && selectedInstrument) {
-      if (window.confirm('Confirm placing the order?')) {
-        handlePlaceOrder();
-      }
-    } else {
-      alert('Please select both a stock and an instrument!');
-    }
+
   };
 
   const handleGetActivePositions = () => {
@@ -115,7 +154,7 @@ const PlaceOrderPage = () => {
       setCallOptionArray(filteredCallPayload);
       setPutOptionArray(filteredPutPayload);
       console.log(filteredPutPayload[0])
-      setOptionChainLoaded(true);
+      // setOptionChainLoaded(true);
 
 
     } catch (error) {
@@ -125,18 +164,19 @@ const PlaceOrderPage = () => {
 
   return (
     <div className={styles.container}>
-      
-      <OrderPopUp
-        stockName="AAPL"
-        lastTradedPrice="150.50"
-        lastTradedDate="2023-07-06"
-        high="155.20"
-        low="148.80"
-        open="151.00"
-        prevClose="148.90"
-        productType="Equity"
-        totalTradedQuantity="100000"
-      />
+
+      {openPopUp && <OrderPopUp openPop={openPopUp}
+        handleClose={handleClosePopUp}
+        stockName={stockPriceObj?.Success?.[0]?.stock_code || ""}
+        lastTradedPrice={stockPriceObj?.Success?.[0]?.ltp || ""}
+        lastTradedDate={stockPriceObj?.Success?.[0]?.ltt?.split(' ')[0] || ""}
+        high={stockPriceObj?.Success?.[0]?.high || ""}
+        low={stockPriceObj?.Success?.[0]?.low || ""}
+        open={stockPriceObj?.Success?.[0]?.open || ""}
+        prevClose={stockPriceObj?.Success?.[0]?.previous_close || ""}
+        exchange_code={stockPriceObj?.Success?.[0]?.exchange_code || ""}
+        totalTradedQuantity={stockPriceObj?.Success?.[0]?.total_quantity_traded || ""}
+      />}
       <div style={{ display: "flex" }}>
         <img src="place_order.jpg" style={{ width: "250px", "height": "150px", display: "flex", margin: "auto", marginBottom: "2%" }} ></img>
       </div>
@@ -149,52 +189,38 @@ const PlaceOrderPage = () => {
               Stock / Index:
             </label>
             <div className={styles.autocomplete}>
-  <input
-    type="text"
-    id="stock"
-    className={styles.input}
-    placeholder="Search for a stock..."
-    value={selectedStock}
-    onChange={(e) => {
-      setSelectedStock(e.target.value);
-      setShowAutocomplete(true);
-    }}
-  />
-  {showAutocomplete && (
-    <ul className={styles.autocompleteList}>
-      {stocks
-        .filter((stock) =>
-          stock.toLowerCase().startsWith(selectedStock.toLowerCase())
-        )
-        .filter((stock, index, self) =>
-          self.findIndex((s) => s.toLowerCase() === stock.toLowerCase()) === index
-        )
-        .slice(0, 5)
-        .map((stock) => (
-          <li key={stock} onClick={() => handleStockSelection(stock)}>
-            {stock}
-          </li>
-        ))}
-    </ul>
-  )}
-</div>
+              <input
+                type="text"
+                id="stock"
+                className={styles.input}
+                placeholder="Search for a stock..."
+                value={selectedStock}
+                onChange={(e) => {
+                  setSelectedStock(e.target.value);
+                  setShowAutocomplete(true);
+                }}
+              />
+              {showAutocomplete && (
+                <ul className={styles.autocompleteList}>
+                  {stocks
+                    .filter((stock) =>
+                      stock.toLowerCase().startsWith(selectedStock.toLowerCase())
+                    )
+                    .filter((stock, index, self) =>
+                      self.findIndex((s) => s.toLowerCase() === stock.toLowerCase()) === index
+                    )
+                    .slice(0, 5)
+                    .map((stock) => (
+                      <li key={stock} onClick={() => handleStockSelection(stock)}>
+                        {stock}
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
 
           </div>
           <div className={styles.inputGroup}>
-            {/* <label htmlFor="instrument" className={styles.label}>
-              Instrument:
-            </label>
-            <select
-              id="instrument"
-              className={styles.select}
-              value={selectedInstrument}
-              onChange={(e) => handleInstrumentSelection(e.target.value)}
-            >
-              <option value="">Select instrument</option>
-              <option value="options">Options</option>
-              <option value="futures">Futures</option>
-              <option value="stocks">Stocks</option>
-            </select> */}
           </div>
           <div className={styles.autocomplete}>
             <label htmlFor="instrument" className={styles.label}>
@@ -204,12 +230,11 @@ const PlaceOrderPage = () => {
               selected={selectedDateExpiry}
               onChange={handleDateChangeFrom}
               dateFormat="yyyy-MM-dd"
-              // className={styles.datePicker}
               filterDate={filterDatePicker}
             />
           </div>
           <div className={styles.buttonGroup}>
-            <button className={styles.placeOrderButton} onClick={handleConfirmation}>
+            <button className={styles.placeOrderButton} onClick={handleOpenPopUp}>
               Place Order
             </button>
             <button className={styles.getPositionsButton} onClick={handleGetActivePositions}>
@@ -227,7 +252,7 @@ const PlaceOrderPage = () => {
 
           </div>
         </div>
-        
+
       </div>
 
 

@@ -99,6 +99,8 @@
 .optionChainContainer {
   margin-bottom: 20px;
   text-align: center;
+  display: flex;
+  margin-left:25%
  
 }
 

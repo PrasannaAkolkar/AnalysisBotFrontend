@@ -96,7 +96,7 @@ const OrderPopUp = ({
             <img src="high-priority.svg" alt="Last Traded Price" style={{width:"20px","height":"20px"}}/>
             </div>
             <div className={classes.infoText}>
-              <p className="info-label">Last Traded Date :</p>
+              <p className="info-label">Last Traded Date:</p>
               <p className="info-value">{lastTradedDate}</p>
             </div>
           </div>
@@ -140,14 +140,14 @@ const OrderPopUp = ({
             <img src="high-priority.svg" alt="Last Traded Price" style={{width:"20px","height":"20px"}}/>
             </div>
             <div className={classes.infoText}>
-              <p className="info-label">Exchange</p>
+              <p className="info-label">Exchange: </p>
               <p className="info-value">{exchange_code}</p>
             </div>
             <div className={classes.infoIconright}>
             <img src="high-priority.svg" alt="Last Traded Price" style={{width:"20px","height":"20px"}}/>
             </div>
             <div className={classes.infoText}>
-              <p className="info-label">Total Traded Quantity</p>
+              <p className="info-label">Total Traded Quantity:</p>
               <p className="info-value">{totalTradedQuantity}</p>
             </div>
           </div>

@@ -14,7 +14,7 @@ import LineChart from '@/components/LineStickChart';
 
 const PlaceOrderPage = () => {
   const [openPopUp, setOpenPopUp] = useState(false);
-  const [selectedStock, setSelectedStock] = useState('');
+  const [selectedStock, setSelectedStock] = useState('NIFTY');
   const [selectedStockPrice, setSelectedStockPrice] = useState(0);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const [callOptionArray, setCallOptionArray] = useState([]);
@@ -65,7 +65,8 @@ const PlaceOrderPage = () => {
   async function fetchPositions() {
     const response = await fetch('http://localhost:5000/portfolio-positions')
     const data = await response.json();
-    setPortfolioPositions(data?.Success)
+    console.log("positions"  , data)
+    setPortfolioPositions([data[0]?.Success,data[1]?.Success])
   }
   async function fetchData() {
 
@@ -94,10 +95,10 @@ const PlaceOrderPage = () => {
       }),
     });
     const data = await response.json();
-    // console.log("x data is", data?.Success)
+    console.log("x data is", data?.Success)
     let priceDate = []
     const historicalDataList = data?.Success
-    for(let i=0;i<historicalDataList.length;i++){
+    for(let i=0;i<historicalDataList?.length;i++){
       let payload = {
         "price": historicalDataList[i].close,
         "date": historicalDataList[i].datetime
@@ -111,7 +112,7 @@ const PlaceOrderPage = () => {
 
   useEffect(() => {
     fetchData();
-    fetchPositions()
+    // fetchPositions()
     fetchHistoricalData()
 
   }, [selectedStock]);
@@ -126,7 +127,8 @@ const PlaceOrderPage = () => {
     setOpenPopUp(false);
   };
 
-  const handleGetActivePositions = () => {
+  const handleGetActivePositions = async () => {
+    await fetchPositions()
     console.log('Fetching active positions...');
   };
 
@@ -289,7 +291,7 @@ const PlaceOrderPage = () => {
             <LineChart data={historicalData} width={600} height={200}/>
           </div>
         </div>
-        <div style={{ marginLeft: "15%", display: "flex" }}>
+        <div style={{ marginLeft: "10%", display: "flex" }}>
 
           <PortfolioTable portfolioPositions={portfolioPositions}></PortfolioTable>
           <div className={styles.optionChainContainer}>

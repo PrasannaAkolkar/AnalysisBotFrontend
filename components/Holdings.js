@@ -18,19 +18,30 @@ const PortfolioTable = (portfolioPositions) => {
   const portfolioHoldingsData = []
   const portfolioPositionsData = []
 
-  // console.log("x ppd", (portfolioPositions?.portfolioPositions))
+  console.log("x ppd", (portfolioPositions?.portfolioPositions))
   try{
-  for (let i = 0; i < (portfolioPositions?.portfolioPositions)?.length; i++) {
+  for (let i = 0; i < (portfolioPositions?.portfolioPositions[0])?.length; i++) {
     let stockPayload = {
       stockCode: portfolioPositions.portfolioPositions[i].stock_code,
       entryPrice: Number(portfolioPositions.portfolioPositions[i].average_price),
       currentProfitLoss: (Math.round(Number(portfolioPositions.portfolioPositions[i].ltp) - Number(portfolioPositions.portfolioPositions[i].average_price))) * Number(portfolioPositions.portfolioPositions[i].quantity),
       settlementId: portfolioPositions.portfolioPositions[i].settlement_id,
-      action:  portfolioPositions.portfolioPositions[i].action
+      // action:  portfolioPositions.portfolioPositions[i].action
     }
 
-    portfolioHoldingsData.push(stockPayload)
     portfolioPositionsData.push(stockPayload)
+  }
+  console.log("position length" , portfolioPositions?.portfolioPositions[1]?.length)
+  for (let i = 0; i < (portfolioPositions?.portfolioPositions[1])?.length; i++) {
+    console.log("position inside" , portfolioPositions.portfolioPositions[1][i].average_price)
+    let stockPayload = {
+      stockCode: portfolioPositions.portfolioPositions[1][i].stock_code,
+      entryPrice: Number(portfolioPositions.portfolioPositions[1][i].average_price),
+      currentProfitLoss: (Math.round(Number(portfolioPositions.portfolioPositions[1][i].current_market_price) - Number(portfolioPositions.portfolioPositions[1][i].average_price))) * Number(portfolioPositions.portfolioPositions[1][i].quantity),
+      // action:  (portfolioPositions.portfolioPositions[i][1].action) ?  (portfolioPositions.portfolioPositions[i][1].action) :""
+    }
+    console.log("positions payload" , stockPayload)
+    portfolioHoldingsData.push(stockPayload)
   }
 }catch(error){
   console.log("Unable to fetch data")
@@ -45,8 +56,7 @@ const PortfolioTable = (portfolioPositions) => {
               <TableCell>Stock Code</TableCell>
               <TableCell>Entry Price</TableCell>
               <TableCell>Current Profit/Loss</TableCell>
-              <TableCell>Settlement ID</TableCell>
-              <TableCell>Action</TableCell>
+              {/* <TableCell>Action</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -60,8 +70,7 @@ const PortfolioTable = (portfolioPositions) => {
                 <TableCell style={{textAlign:"center"}}>{row.stockCode}</TableCell>
                 <TableCell style={{textAlign:"center"}}>{row.entryPrice}</TableCell>
                 <TableCell style={{textAlign:"center"}}>{row.currentProfitLoss}</TableCell>
-                <TableCell style={{textAlign:"center"}}>{row.settlementId}</TableCell>
-                <TableCell style={{textAlign:"center"}}>{row.action}</TableCell>
+                {/* <TableCell style={{textAlign:"center"}}>{row.action}</TableCell> */}
               </TableRow>
             ))}
             <TableRow>
@@ -74,8 +83,7 @@ const PortfolioTable = (portfolioPositions) => {
                 <TableCell style={{textAlign:"center"}}>{row.stockCode}</TableCell>
                 <TableCell style={{textAlign:"center"}}>{row.entryPrice}</TableCell>
                 <TableCell style={{textAlign:"center"}}>{row.currentProfitLoss}</TableCell>
-                <TableCell style={{textAlign:"center"}}>{row.settlementId}</TableCell>
-                <TableCell style={{textAlign:"center"}}>{row.action}</TableCell>
+                {/* <TableCell style={{textAlign:"center"}}>{row.action}</TableCell> */}
               </TableRow>
             ))}
           </TableBody>

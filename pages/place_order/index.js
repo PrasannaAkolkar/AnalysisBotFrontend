@@ -14,7 +14,7 @@ import LineChart from '@/components/LineStickChart';
 
 const PlaceOrderPage = () => {
   const [openPopUp, setOpenPopUp] = useState(false);
-  const [selectedStock, setSelectedStock] = useState('');
+  const [selectedStock, setSelectedStock] = useState('NIFTY');
   const [selectedStockPrice, setSelectedStockPrice] = useState(0);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const [callOptionArray, setCallOptionArray] = useState([]);
@@ -65,7 +65,8 @@ const PlaceOrderPage = () => {
   async function fetchPositions() {
     const response = await fetch('http://localhost:5000/portfolio-positions')
     const data = await response.json();
-    setPortfolioPositions(data?.Success)
+    console.log("positions"  , data)
+    setPortfolioPositions([data[0]?.Success,data[1]?.Success])
   }
   async function fetchData() {
 
@@ -81,7 +82,19 @@ const PlaceOrderPage = () => {
     const data = await response.json();
     setStockPriceObj(data)
   }
-
+  async function fetchTAData(){
+    const response = await fetch("http://localhost:5000/ta-data", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+      }),
+    });
+    const data = await response.json();
+    console.log("data ta is" , data)
+  }
   async function fetchHistoricalData() {
 
     const response = await fetch("http://localhost:5000/historical-data", {
@@ -95,13 +108,23 @@ const PlaceOrderPage = () => {
     });
     const data = await response.json();
     console.log("x data is", data?.Success)
-    setHistoricalData(data?.Success)
+    let priceDate = []
+    const historicalDataList = data?.Success
+    for(let i=0;i<historicalDataList?.length;i++){
+      let payload = {
+        "price": historicalDataList[i].close,
+        "date": historicalDataList[i].datetime
+      }
+      priceDate.push(payload)
+    }
+    
+    setHistoricalData(priceDate)
 
   }
 
   useEffect(() => {
     fetchData();
-    fetchPositions()
+    // fetchPositions()
     fetchHistoricalData()
 
   }, [selectedStock]);
@@ -116,7 +139,9 @@ const PlaceOrderPage = () => {
     setOpenPopUp(false);
   };
 
-  const handleGetActivePositions = () => {
+  const handleGetActivePositions = async () => {
+    await fetchPositions()
+    await fetchTAData()
     console.log('Fetching active positions...');
   };
 
@@ -178,18 +203,18 @@ const PlaceOrderPage = () => {
     }
   };
 
-  const stockData = [
-    { date: '2022-01-01', price: 50 },
-    { date: '2022-01-02', price: 55 },
-    { date: '2022-01-03', price: 34 },
-    { date: '2022-01-04', price: 21},
-    { date: '2022-01-05', price: 100 },
-    { date: '2022-01-06', price: 50 },
-    { date: '2022-01-07', price: 55 },
-    { date: '2022-01-08', price: 34 },
-    { date: '2022-01-09', price: 21},
-    { date: '2022-01-10', price: 100 },
-  ];
+  // const stockData = [
+  //   { date: '2022-01-01', price: 50 },
+  //   { date: '2022-01-02', price: 55 },
+  //   { date: '2022-01-03', price: 34 },
+  //   { date: '2022-01-04', price: 21 },
+  //   { date: '2022-01-05', price: 100 },
+  //   { date: '2022-01-06', price: 50 },
+  //   { date: '2022-01-07', price: 55 },
+  //   { date: '2022-01-08', price: 34 },
+  //   { date: '2022-01-09', price: 21 },
+  //   { date: '2022-01-10', price: 100 },
+  // ];
 
   return (
     <div className={styles.container}>
@@ -268,18 +293,18 @@ const PlaceOrderPage = () => {
               Place Order
             </button>
             <button className={styles.getPositionsButton} onClick={handleGetActivePositions}>
-              Get All Active Positions
+              Fetch Holdings
             </button>
             <button className={styles.loadOptionChainButton} onClick={handleLoadOptionChain}>
               Load Option Chain
             </button>
           </div>
           <div>
-            <h1>Stock Chart</h1>
-            <LineChart data={stockData} width={400} height={200} />
+            <u><h2 style={{marginTop:"5%"}}>{selectedStock}</h2></u>
+            <LineChart data={historicalData} width={600} height={200}/>
           </div>
         </div>
-        <div style={{ marginLeft: "15%", display: "flex" }}>
+        <div style={{ marginLeft: "10%", display: "flex" }}>
 
           <PortfolioTable portfolioPositions={portfolioPositions}></PortfolioTable>
           <div className={styles.optionChainContainer}>

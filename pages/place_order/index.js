@@ -82,7 +82,19 @@ const PlaceOrderPage = () => {
     const data = await response.json();
     setStockPriceObj(data)
   }
-
+  async function fetchTAData(){
+    const response = await fetch("http://localhost:5000/ta-data", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+      }),
+    });
+    const data = await response.json();
+    console.log("data ta is" , data)
+  }
   async function fetchHistoricalData() {
 
     const response = await fetch("http://localhost:5000/historical-data", {
@@ -129,6 +141,7 @@ const PlaceOrderPage = () => {
 
   const handleGetActivePositions = async () => {
     await fetchPositions()
+    await fetchTAData()
     console.log('Fetching active positions...');
   };
 
@@ -280,7 +293,7 @@ const PlaceOrderPage = () => {
               Place Order
             </button>
             <button className={styles.getPositionsButton} onClick={handleGetActivePositions}>
-              Get All Active Positions
+              Fetch Holdings
             </button>
             <button className={styles.loadOptionChainButton} onClick={handleLoadOptionChain}>
               Load Option Chain

@@ -21,37 +21,37 @@ const MarketAnalysis = () => {
       value: '1234', // Replace with the actual value for Volume
     },
     {
-      icon: 'volume.png',
+      icon: 'trending-up.svg',
       text: 'Trend',
       value: 'Up', // Replace with the actual value for Trend
     },
     {
-      icon: 'volume.png',
+      icon: 'stoch.webp',
       text: 'Stochastic',
       value: '85', // Replace with the actual value for Stochastic
     },
     {
-      icon: 'volume.png',
+      icon: 'rsi.webp',
       text: 'RSI',
       value: '70', // Replace with the actual value for RSI
     },
     {
-      icon: 'volume.png',
+      icon: 'ema3.png',
       text: 'EMA',
       value: '50', // Replace with the actual value for EMA
     },
     {
-      icon: 'volume.png',
+      icon: 'overbought.png',
       text: 'Overbought',
       value: 'Yes', // Replace with the actual value for Overbought
     },
     {
-      icon: 'volume.png',
+      icon: 'overbought.png',
       text: 'Oversold',
       value: 'No', // Replace with the actual value for Oversold
     },
     {
-      icon: 'volume.png',
+      icon: 'volatility2.png',
       text: 'Volatility',
       value: 'High', // Replace with the actual value for Volatility
     },
@@ -61,7 +61,7 @@ const MarketAnalysis = () => {
     <div className={styles.container}>
       <h1 className={styles.title}>Analyser</h1>
       <img
-        src="analytics.svg"
+        src="market_analysis.svg.svg"
         alt="Analyser Image"
         className={styles.analyserImage}
       />

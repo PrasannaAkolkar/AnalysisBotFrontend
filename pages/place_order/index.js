@@ -33,9 +33,6 @@ const PlaceOrderPage = () => {
     { date: '2022-01-10', price: 100 },
   ])
 
-  function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
-  }
   const handleRefreshData = async () => {
     // try {
     //   const response = await fetch(GET_QUOTE_API, {

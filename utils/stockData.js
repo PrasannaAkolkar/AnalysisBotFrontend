@@ -6,21 +6,26 @@ function getKeyByValue(object, value) {
   }
 
 export async function fetchStockData(selectedStock) {
+try{
+  const response = await fetch(GET_QUOTE_API, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+    }),
+});
+const data = await response.json()
 
-    const response = await fetch(GET_QUOTE_API, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-        }),
-    });
-    const data = await response.json()
+return data
+}catch(err){
+  console.log("Error")
+}
     
-    return data
 }
 export async function fetchStockTAData(selectedStock){
+  try{
     const response = await fetch(GET_TA_DATA, {
       method: 'POST',
       headers: {
@@ -35,30 +40,39 @@ export async function fetchStockTAData(selectedStock){
 
     return data
   }
+  catch(err){
+    console.log("error")
+  }
+    
+  }
   export async function fetchStockHistoricalData(selectedStock) {
-    console.log("price  " , selectedStock)
-    const response = await fetch(GET_HISTORICAL_DATA, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-      }),
-    });
-    const data = await response.json();
-    console.log("x data is", data?.Success)
-    let priceDate = []
-    const historicalDataList = data?.Success
-    for(let i=0;i<historicalDataList?.length;i++){
-      let payload = {
-        "price": historicalDataList[i].close,
-        "date": historicalDataList[i].datetime
+    try{
+      const response = await fetch(GET_HISTORICAL_DATA, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+        }),
+      });
+      const data = await response.json();
+      console.log("x data is", data?.Success)
+      let priceDate = []
+      const historicalDataList = data?.Success
+      for(let i=0;i<historicalDataList?.length;i++){
+        let payload = {
+          "price": historicalDataList[i].close,
+          "date": historicalDataList[i].datetime
+        }
+        priceDate.push(payload)
       }
-      priceDate.push(payload)
+      console.log("price stock" , priceDate)
+      return priceDate
+    }catch(err){
+      console.log("error")
     }
-    console.log("price stock" , priceDate)
-    return priceDate
+    
   }
 
   export async function fetchStockPositions() {

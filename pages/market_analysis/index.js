@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../styles/MarketAnalysis.module.css';
 import { stocks_names_breeze } from '@/utils/stock_names';
 import LineChart from '@/components/LineStickChart';
+import { fetchStockHistoricalData, fetchStockTAData } from '@/utils/stockData';
 
 const stock_names = Object.values(stocks_names_breeze[0]);
 const stocks = stock_names;
@@ -13,58 +14,78 @@ const MarketAnalysis = () => {
     setSelectedStock(stock);
     setShowAutocomplete(false);
   };
+  const [taData, setTaData] = useState({})
+  const [historicalData, setHistoricalData] = useState([])
+  const [available, setAvailable] = useState(false)
+
+  async function fetchHistoricalData() {
+    setHistoricalData(await fetchStockHistoricalData(selectedStock))
+    console.log("Price TA Historical", historicalData)
+  }
+  async function fetchTAData() {
+    const data = await fetchStockTAData(selectedStock)
+    setTaData(data)
+    console.log("Price TA data ", taData)
+  }
+
+  useEffect(() => {
+    fetchHistoricalData()
+    fetchTAData()
+  }, [selectedStock]);
 
   const gridData = [
     {
       icon: 'volume.png',
-      text: 'Volume',
-      value: '1234', // Replace with the actual value for Volume
+      text: 'Average Volume',
+      value: taData?.volume_comparison,
     },
     {
       icon: 'trending-up.svg',
       text: 'Trend',
-      value: 'Up', // Replace with the actual value for Trend
+      value: taData?.trend,
     },
     {
       icon: 'stoch.webp',
       text: 'Stochastic',
-      value: '85', // Replace with the actual value for Stochastic
+      value: taData?.stoch,
     },
     {
       icon: 'rsi.webp',
       text: 'RSI',
-      value: '70', // Replace with the actual value for RSI
+      value: taData?.rsi,
     },
     {
       icon: 'ema3.png',
-      text: 'EMA',
-      value: '50', // Replace with the actual value for EMA
+      text: '200 EMA',
+      value: taData?.ema,
     },
     {
       icon: 'overbought.png',
-      text: 'Overbought',
-      value: 'Yes', // Replace with the actual value for Overbought
+      text: 'Buy/Sell Pressure',
+      value: taData?.rsi_trend,
     },
     {
-      icon: 'overbought.png',
-      text: 'Oversold',
-      value: 'No', // Replace with the actual value for Oversold
+      icon: 'div2.webp',
+      text: 'Divergence',
+      value: taData?.divergence,
     },
     {
       icon: 'volatility2.png',
       text: 'Volatility',
-      value: 'High', // Replace with the actual value for Volatility
+      value: taData?.volatility_comparison
+      ,
     },
   ];
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Analyser</h1>
+
       <img
         src="market_analysis.svg.svg"
         alt="Analyser Image"
         className={styles.analyserImage}
       />
+      <h1 className={styles.title}>Analyser</h1>
       <div className={styles.autocomplete}>
         <label htmlFor="stock" className={styles.autocompleteLabel}>
           Choose your stock
@@ -101,7 +122,7 @@ const MarketAnalysis = () => {
           </ul>
         )}
       </div>
-
+      <LineChart data={historicalData} width={1000} height={300}/>
       <div className={styles.gridContainer}>
         {gridData.map((data, index) => (
           <div className={styles.gridItem} key={index}>

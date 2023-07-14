@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/PlaceOrderPage.module.css';
 import OptionChain from '@/components/OptionChain';
-import { GET_OPTION_CHAIN, GET_QUOTE_API } from '@/utils/apiLinks';
 // import { convertToKeyValue } from '@/utils/stock_names';
 import { stocks_names_breeze } from '@/utils/stock_names';
 import DatePicker from 'react-datepicker';
@@ -11,11 +10,10 @@ import PortfolioTable from '@/components/Holdings';
 const stock_names = (Object.values(stocks_names_breeze[0]))
 const stocks = stock_names
 import LineChart from '@/components/LineStickChart';
-
+import { fetchStockData, fetchStockHistoricalData, fetchStockTAData, fetchStockPositions, fetchStockOptionChain } from '@/utils/stockData';
 const PlaceOrderPage = () => {
   const [openPopUp, setOpenPopUp] = useState(false);
   const [selectedStock, setSelectedStock] = useState('NIFTY');
-  const [selectedStockPrice, setSelectedStockPrice] = useState(0);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const [callOptionArray, setCallOptionArray] = useState([]);
   const [putOptionArray, setPutOptionArray] = useState([]);
@@ -35,98 +33,48 @@ const PlaceOrderPage = () => {
     { date: '2022-01-10', price: 100 },
   ])
 
-  function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
-  }
   const handleRefreshData = async () => {
-    try {
-      const response = await fetch(GET_QUOTE_API, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-        }),
-      });
-      const data = await response.json();
+    // try {
+    //   const response = await fetch(GET_QUOTE_API, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
+    //     }),
+    //   });
+    //   const data = await response.json();
 
-      setStockPriceObj(data);
-    } catch (error) {
-      console.error('Error refreshing data:', error);
-    }
+    //   setStockPriceObj(data);
+    // } catch (error) {
+    //   console.error('Error refreshing data:', error);
+    // }
+    setStockPriceObj(await fetchStockData(selectedStock));
   };
 
   const handleStockSelection = (stock) => {
     setSelectedStock(stock);
     setShowAutocomplete(false);
   };
-
   async function fetchPositions() {
-    const response = await fetch('http://localhost:5000/portfolio-positions')
-    const data = await response.json();
-    console.log("positions"  , data)
+    const data = await fetchStockPositions()
     setPortfolioPositions([data[0]?.Success,data[1]?.Success])
   }
   async function fetchData() {
-
-    const response = await fetch(GET_QUOTE_API, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-      }),
-    });
-    const data = await response.json();
-    setStockPriceObj(data)
+    setStockPriceObj(await fetchStockData(selectedStock))
   }
   async function fetchTAData(){
-    const response = await fetch("http://localhost:5000/ta-data", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-      }),
-    });
-    const data = await response.json();
-    console.log("data ta is" , data)
+    const data = await fetchStockTAData(selectedStock)
+    console.log("Price TA data " , data)
   }
   async function fetchHistoricalData() {
-
-    const response = await fetch("http://localhost:5000/historical-data", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-      }),
-    });
-    const data = await response.json();
-    console.log("x data is", data?.Success)
-    let priceDate = []
-    const historicalDataList = data?.Success
-    for(let i=0;i<historicalDataList?.length;i++){
-      let payload = {
-        "price": historicalDataList[i].close,
-        "date": historicalDataList[i].datetime
-      }
-      priceDate.push(payload)
-    }
-    
-    setHistoricalData(priceDate)
-
+    setHistoricalData(await fetchStockHistoricalData(selectedStock))
   }
 
   useEffect(() => {
     fetchData();
-    // fetchPositions()
     fetchHistoricalData()
-
   }, [selectedStock]);
 
   const handleOpenPopUp = async () => {
@@ -155,67 +103,14 @@ const PlaceOrderPage = () => {
   };
 
   const handleLoadOptionChain = async () => {
-    // const keyValuePairs = convertToKeyValue();
-    console.log("key value pairs", stocks_names_breeze);
-    console.log("key from value", getKeyByValue(stocks_names_breeze[0], selectedStock))
-    try {
-      const response = await fetch(GET_OPTION_CHAIN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          stock_code: getKeyByValue(stocks_names_breeze[0], selectedStock),
-          expiry: selectedDateExpiry
-        }),
-      });
-      const data = await response.json();
-      if (data[0]?.Error) {
-        console.log("error", data[0]?.Error)
-        alert(data[0]?.Error);
-      }
-      console.log("data is", data)
-      const callPayload = data[0]?.Success || [];
-      const putPayload = data[1]?.Success || [];
-      const filteredCallPayload = callPayload.filter((callOption) => {
-        const correspondingPutOption = putPayload.find(
-          (putOption) =>
-            putOption.expiry_date === callOption.expiry_date &&
-            putOption.strike_price === callOption.strike_price
-        );
-        return callOption.open_interest !== 0 || correspondingPutOption?.open_interest !== 0;
-      });
-
-      const filteredPutPayload = putPayload.filter((putOption) => {
-        const correspondingCallOption = callPayload.find(
-          (callOption) =>
-            callOption.expiry_date === putOption.expiry_date &&
-            callOption.strike_price === putOption.strike_price
-        );
-        return putOption.open_interest !== 0 || correspondingCallOption?.open_interest !== 0;
-      });
-      setCallOptionArray(filteredCallPayload);
-      setPutOptionArray(filteredPutPayload);
-      console.log(filteredPutPayload[0])
-
-    } catch (error) {
-      console.error('Error loading option chain:', error);
+    try{
+      const optionChainData = await fetchStockOptionChain(selectedStock,selectedDateExpiry)
+      setCallOptionArray(optionChainData[0]);
+      setPutOptionArray(optionChainData[1]);
+    }catch(err){
+      console.log("error fetching option data")
     }
   };
-
-  // const stockData = [
-  //   { date: '2022-01-01', price: 50 },
-  //   { date: '2022-01-02', price: 55 },
-  //   { date: '2022-01-03', price: 34 },
-  //   { date: '2022-01-04', price: 21 },
-  //   { date: '2022-01-05', price: 100 },
-  //   { date: '2022-01-06', price: 50 },
-  //   { date: '2022-01-07', price: 55 },
-  //   { date: '2022-01-08', price: 34 },
-  //   { date: '2022-01-09', price: 21 },
-  //   { date: '2022-01-10', price: 100 },
-  // ];
-
   return (
     <div className={styles.container}>
 

@@ -6,3 +6,6 @@ export const BACKTEST_ALL_STOCKS_API = `${BASE_URL}/testall`;
 export const LOGIN_API = `${BASE_URL}/login`;
 export const GET_QUOTE_API = `${BASE_URL}/get-quote`
 export const GET_OPTION_CHAIN = `${BASE_URL}/option-chain`
+export const GET_TA_DATA = `${BASE_URL}/ta-data`
+export const GET_HISTORICAL_DATA = `${BASE_URL}/historical-data`
+export const GET_PORTFOLIO_POSITIONS = `${BASE_URL}/portfolio-positions`

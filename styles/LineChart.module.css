@@ -1,10 +1,13 @@
 .chartContainer {
   position: relative;
   margin-top: 10%;
+  margin-bottom: 5%;
+  border: 3px solid black;
 }
 
 .chart {
   position: relative;
+  padding:1%
 }
 
 .tooltip {
@@ -32,4 +35,10 @@
   transform: translateX(-50%);
   opacity: 0.5;
   pointer-events: none;
+}
+
+@media screen and (max-width: 768px) {
+  .chartContainer {
+   display:none
+  }
 }

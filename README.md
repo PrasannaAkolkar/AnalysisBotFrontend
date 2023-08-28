@@ -4,6 +4,8 @@
 
 This project is a Next.js-based frontend application for a trade bot designed to automate trading in the Indian stock market using the ICICI Breeze API. It offers several key features to enhance your trading experience.
 
+The backend for the project lies in a different repository. In this repository, we are making calls to those apis.
+
 ## Features
 
 - **Trade Bot**: The application integrates with the ICICI Breeze API to enable automated trading in the Indian stock market. The bot facilitates trade execution based on predefined strategies.
